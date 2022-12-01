@@ -25,7 +25,8 @@ func Test_sumCaolries(t *testing.T) {
 8000
 9000
 
-10000`, want: 24000},
+10000
+`, want: 45000},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
