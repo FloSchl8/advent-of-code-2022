@@ -14,7 +14,7 @@ func Test_getScore(t *testing.T) {
 		{name: "testinput", args: args{input: `A Y
 B X
 C Z
-`}, want: 15},
+`}, want: 12},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

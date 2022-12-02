@@ -12,7 +12,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	fmt.Println("My score:", getScore(string(input)))
 }
 
@@ -23,19 +22,19 @@ func getScore(input string) int {
 	for _, round := range rounds {
 		if round != "" {
 			players := strings.Split(round, " ")
-			elf, own := players[0], players[1]
+			elf, expectedResult := players[0], players[1]
 			switch elf {
-			case "A":
-				switch own {
-				case "X":
-					score += 4
-				case "Y":
-					score += 8
-				case "Z":
-					score += 3
+			case "A": // rock
+				switch expectedResult {
+				case "X": // loose
+					score += 3 // sciccor 0+3
+				case "Y": // draw
+					score += 4 // rock 1+3
+				case "Z": // win
+					score += 8 // paper 2+6
 				}
-			case "B":
-				switch own {
+			case "B": // paper
+				switch expectedResult {
 				case "X":
 					score += 1
 				case "Y":
@@ -43,14 +42,14 @@ func getScore(input string) int {
 				case "Z":
 					score += 9
 				}
-			case "C":
-				switch own {
+			case "C": // scissor
+				switch expectedResult {
 				case "X":
-					score += 7
-				case "Y":
 					score += 2
-				case "Z":
+				case "Y":
 					score += 6
+				case "Z":
+					score += 7
 				}
 			}
 		}
