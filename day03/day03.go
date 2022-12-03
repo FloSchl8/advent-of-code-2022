@@ -12,10 +12,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Sum of priorities part 1: ", sortBackpackItems(string(input)))
+	fmt.Println("Sum of priorities part 1: ", part1(string(input)))
+	fmt.Println("Sum of priorities part 2: ", part2(string(input)))
+
 }
 
-func sortBackpackItems(input string) int {
+func part1(input string) int {
 	backpacks := strings.Split(input, "\n")
 
 	sum := 0
@@ -32,6 +34,20 @@ func sortBackpackItems(input string) int {
 		}
 	}
 
+	return sum
+}
+
+func part2(input string) int {
+	backpacks := strings.Split(input, "\n")
+	sum := 0
+	for i := 0; i < len(backpacks); i += 3 {
+		for _, c := range backpacks[i] {
+			if strings.Contains(backpacks[i+1], string(c)) && strings.Contains(backpacks[i+2], string(c)) {
+				sum += getCharPriorityFromAsciiIndex(c)
+				break
+			}
+		}
+	}
 	return sum
 }
 
