@@ -41,6 +41,17 @@ func stackCrates(input string) (topOnes string) {
 		}
 	}
 
+	for i, stack := range stacks {
+		var tmp []string
+		copy(tmp, stack)
+		for _, s := range stack {
+			if s != "" {
+				tmp = append(tmp, s)
+			}
+		}
+		stacks[i] = tmp
+	}
+
 	fmt.Println(stacks)
 
 	operations := make([]operation, 0)
@@ -52,33 +63,21 @@ func stackCrates(input string) (topOnes string) {
 	}
 
 	for k, o := range operations {
-		for i := 0; i < o.numOfCrates; i++ {
-			pickupStack := stacks[o.pickup-1]
-			c := ""
-			var newStack []string
-			for j := 0; j < len(pickupStack); j++ {
-				if pickupStack[j] != "" {
-					c, newStack = pickupStack[j], pickupStack[j+1:]
-					break
-				}
-			}
-			stacks[o.pickup-1] = newStack
+		fmt.Println(o)
 
-			dropAtStack := stacks[o.dropAt-1]
-			if len(dropAtStack) == 0 {
-				dropAtStack = append(dropAtStack, c)
-			} else {
-				for j := 0; j < len(dropAtStack); j++ {
-					if dropAtStack[j] != "" {
-						firstPart := dropAtStack[:j]
-						secondPart := append([]string{c}, dropAtStack[j:]...)
-						dropAtStack = append(firstPart, secondPart...)
-						break
-					}
-				}
-			}
-			stacks[o.dropAt-1] = dropAtStack
+		movingStack := stacks[o.pickup-1][:o.numOfCrates]
+
+		for i, j := 0, len(movingStack)-1; i < j; i, j = i+1, j-1 {
+			movingStack[i], movingStack[j] = movingStack[j], movingStack[i]
 		}
+
+		fmt.Println(movingStack)
+
+		for _, crate := range movingStack {
+			stacks[o.pickup-1] = stacks[o.pickup-1][1:]
+			stacks[o.dropAt-1] = append([]string{crate}, stacks[o.dropAt-1]...)
+		}
+
 		fmt.Println("operation: ", k, "stacks: ", stacks)
 
 	}
