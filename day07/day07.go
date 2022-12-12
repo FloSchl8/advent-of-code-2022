@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math"
 	"os"
 	"regexp"
 	"strconv"
@@ -58,11 +59,57 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("Part 01", "Total size of directories not bigger than 100.000", part01(string(input)))
+	fmt.Println("Part 02", "Size of smallest directory to delete", part02(string(input)))
+
 }
 
 func part01(input string) int {
 	lines := strings.Split(input, "\n")
 
+	root := getFileSystem(lines)
+
+	var dirSizes = make(map[string]int)
+	for s, d := range root.subdirectories {
+		dirSizes["/"+s] = d.size
+		getSubdirecotrySize(d, dirSizes, s)
+	}
+
+	result := 0
+
+	for s, i := range dirSizes {
+		if i <= 100000 {
+			result += dirSizes[s]
+		}
+		fmt.Println(s, ":", dirSizes[s])
+	}
+
+	return result
+}
+
+func part02(input string) int {
+	lines := strings.Split(input, "\n")
+
+	root := getFileSystem(lines)
+
+	neededSpace := 30000000 - (70000000 - root.size)
+
+	var dirSizes = make(map[string]int)
+	for s, d := range root.subdirectories {
+		dirSizes["/"+s] = d.size
+		getSubdirecotrySize(d, dirSizes, s)
+	}
+
+	result := math.MaxInt
+	for _, i := range dirSizes {
+		if i >= neededSpace && i <= result {
+			result = i
+		}
+	}
+
+	return result
+}
+
+func getFileSystem(lines []string) *directory {
 	root := &directory{name: "/"}
 
 	currentDirectory := root
@@ -105,22 +152,8 @@ func part01(input string) int {
 
 	root.getDirectorySize()
 
-	var dirSizes = make(map[string]int)
-	for s, d := range root.subdirectories {
-		dirSizes["/"+s] = d.size
-		getSubdirecotrySize(d, dirSizes, s)
-	}
+	return root
 
-	result := 0
-
-	for s, i := range dirSizes {
-		if i <= 100000 {
-			result += dirSizes[s]
-		}
-		fmt.Println(s, ":", dirSizes[s])
-	}
-
-	return result
 }
 
 func getSubdirecotrySize(d *directory, dirSizes map[string]int, parent string) {
