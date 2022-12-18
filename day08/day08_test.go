@@ -216,3 +216,64 @@ func Test_treeIsVisible(t *testing.T) {
 		})
 	}
 }
+
+func Test_getHighestTreeScore(t *testing.T) {
+	type args struct {
+		input string
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{name: "testinput",
+			args: args{input: `30373
+25512
+65332
+33549
+35390
+`},
+			want: 8},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := getHighestTreeScore(tt.args.input); got != tt.want {
+				t.Errorf("getHighestTreeScore() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_getTreeScore(t *testing.T) {
+	type args struct {
+		treeHeight     int
+		horizontalLine []int
+		verticalLine   []int
+		x              int
+		y              int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "score at 1 2 with height 5 with lines [3 5 3 5 3] [2 5 5 1 2] should be 4",
+			args: args{
+				treeHeight:     5,
+				horizontalLine: []int{3, 5, 3, 5, 3},
+				verticalLine:   []int{2, 5, 5, 1, 2},
+				x:              1,
+				y:              2,
+			},
+			want: 4,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := getTreeScore(tt.args.treeHeight, tt.args.horizontalLine, tt.args.verticalLine, tt.args.x, tt.args.y); got != tt.want {
+				t.Errorf("getTreeScore() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

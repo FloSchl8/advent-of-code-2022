@@ -14,6 +14,31 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("Part 1", "Visible trees:", getVisibleTrees(string(input)))
+	fmt.Println("Part 2", "Best score:", getHighestTreeScore(string(input)))
+
+}
+
+func getHighestTreeScore(input string) int {
+	lines := strings.Split(input, "\n")
+
+	result := 0
+
+	for i, line := range lines {
+		for j, tree := range line {
+			if line != "" && i > 0 && j > 0 && i < len(line)-1 && j < len(line)-1 {
+				treeHeight, _ := strconv.Atoi(string(tree))
+				verticalLine := getLineHeights(line)
+				horizontalLine := getHorizontalLineHeights(lines, j)
+
+				tmpResult := getTreeScore(treeHeight, horizontalLine, verticalLine, i, j)
+				if tmpResult > result {
+					result = tmpResult
+				}
+			}
+		}
+	}
+	return result
+
 }
 
 func getVisibleTrees(input string) int {
@@ -63,6 +88,55 @@ func getLineHeights(line string) []int {
 		result = append(result, h)
 	}
 	return result
+}
+
+func getTreeScore(treeHeight int, horizontalLine, verticalLine []int, x, y int) int {
+
+	horizontal1 := 0
+	horizontal2 := 0
+	vertical1 := 0
+	vertical2 := 0
+
+	for i := x + 1; i < len(horizontalLine); i++ {
+		if treeHeight > horizontalLine[i] {
+			horizontal1++
+		} else {
+			horizontal1++
+			break
+		}
+	}
+
+	// horizontal starting at tree index walking left
+	for i := x - 1; i >= 0; i-- {
+		if treeHeight > horizontalLine[i] {
+			horizontal2++
+		} else {
+			horizontal2++
+			break
+		}
+	}
+
+	// vertical starting at tree index walking 'right' ending
+	for i := y + 1; i < len(verticalLine); i++ {
+		if treeHeight > verticalLine[i] {
+			vertical1++
+		} else {
+			vertical1++
+			break
+		}
+	}
+
+	// vertical starting at zero till tree index
+	for i := y - 1; i >= 0; i-- {
+		if treeHeight > verticalLine[i] {
+			vertical2++
+		} else {
+			vertical2++
+			break
+		}
+	}
+
+	return horizontal1 * horizontal2 * vertical1 * vertical2
 }
 
 func treeIsVisible(treeHeight int, horizontalLine, verticalLine []int, x, y int) bool {
