@@ -35,6 +35,7 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("Part 1", "Number of unique visited points of tail", part01(string(input)))
+	fmt.Println("Part 2", "Number of unique visited points of tail", part02(string(input)))
 }
 
 func part01(input string) int {
@@ -62,6 +63,83 @@ func part01(input string) int {
 				moveTail(&t, &h)
 			}
 			tailPositions = append(tailPositions, point(t))
+		}
+	}
+
+	var uniquePositions = []point{}
+
+	for i, position := range tailPositions {
+		unique := true
+		for j := 0; j < len(uniquePositions); j++ {
+			if i != j {
+				if position.pointIsEqual(uniquePositions[j]) {
+					unique = false
+				}
+			}
+		}
+		if unique {
+			uniquePositions = append(uniquePositions, position)
+		}
+	}
+
+	return len(uniquePositions)
+}
+
+func part02(input string) int {
+
+	lines := strings.Split(input, "\n")
+
+	var moves = []move{}
+
+	for _, line := range lines {
+		if line != "" {
+			moves = append(moves, getMoveFromLine(line))
+		}
+	}
+
+	h := head{
+		x: 0,
+		y: 0,
+	}
+
+	rope := map[int]point{}
+
+	for i := 1; i < 10; i++ {
+		rope[i] = point{
+			x: 0,
+			y: 0,
+		}
+	}
+
+	var tailPositions = []point{}
+
+	// adding start
+	tailPositions = append(tailPositions, point{
+		x: 0,
+		y: 0,
+	})
+
+	for _, m := range moves {
+		for i := 0; i < m.steps; i++ {
+			moveHead(&h, m.direction)
+
+			for j := 1; j <= len(rope); j++ {
+				t := tail(rope[j])
+				var previous head
+				if j == 1 {
+					previous = h
+				} else {
+					previous = head(rope[j-1])
+				}
+				fromHead := t.distanceFromHead(previous)
+				if fromHead > math.Sqrt2 {
+					moveTail(&t, &previous)
+					rope[j] = point(t)
+					if j == 9 { // index 9 == tail
+						tailPositions = append(tailPositions, point(t))
+					}
+				}
+			}
 		}
 	}
 

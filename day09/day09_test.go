@@ -212,3 +212,33 @@ func Test_moveTail(t *testing.T) {
 		})
 	}
 }
+
+func Test_part02(t *testing.T) {
+	type args struct {
+		input string
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "tesinput", args: args{input: `R 5
+U 8
+L 8
+D 3
+R 17
+D 10
+L 25
+U 20
+`}, want: 36,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := part02(tt.args.input); got != tt.want {
+				t.Errorf("part02() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
