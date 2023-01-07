@@ -1,6 +1,7 @@
 package main
 
 import (
+	"container/ring"
 	"fmt"
 	"log"
 	"os"
@@ -13,7 +14,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	fmt.Println("Part 1", "Sum of cycle * register", part01(string(input)))
+	fmt.Println("Part 2", "CRT displays:")
+	fmt.Println(part02(string(input)))
+
 }
 
 func part01(input string) int {
@@ -67,4 +72,43 @@ func part01(input string) int {
 	}
 
 	return result
+}
+
+func part02(input string) string {
+	lines := strings.Split(input, "\n")
+
+	register := 1
+
+	r := ring.New(240)
+	crtOutput := ""
+	lineIndex := 0
+	nextOperationAtCycle := 0
+	operationValue := 0
+
+	for i := 0; i < r.Len(); i++ {
+		if i%40 == 0 && i > 0 {
+			crtOutput += "\n"
+		}
+
+		if i == nextOperationAtCycle {
+			register += operationValue
+			programline := strings.Split(lines[lineIndex], " ")
+			lineIndex++
+			if len(programline) == 1 {
+				nextOperationAtCycle++
+				operationValue = 0
+			} else { // addx
+				nextOperationAtCycle += 2
+				operationValue, _ = strconv.Atoi(programline[1])
+			}
+		}
+
+		if iMod := i % 40; iMod == register-1 || iMod == register || iMod == register+1 {
+			crtOutput += "#"
+		} else {
+			crtOutput += "."
+		}
+	}
+
+	return crtOutput
 }
